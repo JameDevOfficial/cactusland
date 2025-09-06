@@ -20,7 +20,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     startButton.onclick = function () {
         if (startButton.innerHTML == "Fill it!") {
-            outroFrame.style.display = "Flex"
+            // Animate shrine: empty -> full -> mystical -> hide -> outro
+            const shrineImg = document.getElementById('intro-image');
+            if (!shrineImg) {
+                outroFrame.style.display = "Flex";
+                return;
+            }
+            introButton.disabled = true;
+            shrineImg.src = 'assets/water_shrine_full.png';
+            setTimeout(() => {
+                shrineImg.src = 'assets/water_shrine_mystical.png';
+                setTimeout(() => {
+                    shrineImg.style.transition = 'opacity 0.7s';
+                    shrineImg.style.opacity = '0';
+                    setTimeout(() => {
+                        introFrame.style.display = 'none';
+                        outroFrame.style.display = 'flex';
+                        shrineImg.style.opacity = '1';
+                        introButton.disabled = false;
+                    }, 1500);
+                }, 2500);
+            }, 1500);
             return;
         }
         hearts = maxHearts;
@@ -110,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
         feedback.style.left = c.style.left;
         feedback.style.top = `calc(${c.style.top} - 32px)`;
         feedback.style.width = c.style.width;
-        feedback.style.color = hurt ? 'red' : 'deepskyblue';
+        feedback.style.color = hurt ? '#d74b4bff' : 'deepskyblue';
         // Use X for hurt, 💧 for water (placeholder)
         feedback.textContent = hurt ? '-0.5' : '+1';
 

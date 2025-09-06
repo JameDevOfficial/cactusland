@@ -167,11 +167,14 @@ img {
 #outro-wrapper{
     display: none;
 }
-#outro-background{
+#outro-background, #intro-background{
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+}
+#intro-image{
+    height: 20rem;
 }
 
 #wooden_sign{
