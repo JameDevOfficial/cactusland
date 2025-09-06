@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         outroFrame.style.display = 'flex';
                         shrineImg.style.opacity = '1';
                         introButton.disabled = false;
-                    }, 1500);
+                    }, 2500);
                 }, 2500);
             }, 1500);
             return;
