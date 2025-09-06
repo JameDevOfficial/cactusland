@@ -176,10 +176,10 @@ img {
 #intro-image{
     height: 20rem;
 }
-
-#wooden_sign{
-    margin: auto;
-    height: 30rem;
+#wooden_sign_wrapper{
+    margin: 0;
+    padding: 0;
+    scale: 0.8;
 }
 
 .tumbleweed{
