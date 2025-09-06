@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var hasWon = false;
 
     startButton.onclick = function () {
-        if (startButton.innerHTML == "Fill it!"){
+        if (startButton.innerHTML == "Fill it!") {
             outroFrame.style.display = "Flex"
             return;
         }
@@ -98,7 +98,47 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function handleCactiClick(c) {
         if (hasWon) return 1;
-        game.removeChild(c);
+        if (c.dataset.clicked === 'true') return;
+        c.dataset.clicked = 'true';
+        var randValue = randomBetween(0, 1);
+        const hurt = randValue >= 0.5;
+        const animDuration = 400;
+
+        // Create feedback symbol
+        const feedback = document.createElement('div');
+        feedback.className = 'cactus-feedback';
+        feedback.style.left = c.style.left;
+        feedback.style.top = `calc(${c.style.top} - 32px)`;
+        feedback.style.width = c.style.width;
+        feedback.style.color = hurt ? 'red' : 'deepskyblue';
+        // Use X for hurt, 💧 for water (placeholder)
+        feedback.textContent = hurt ? '-0.5' : '+1';
+
+
+        game.appendChild(feedback);
+
+        // Wiggle animation
+        c.style.transition = `transform ${animDuration}ms cubic-bezier(.36,.07,.19,.97)`;
+        let wiggleFrames = 8;
+        let wiggle = 0;
+        function doWiggle() {
+            if (wiggle < wiggleFrames) {
+                const angle = (wiggle % 2 === 0 ? -1 : 1) * 15;
+                c.style.transform = `rotate(${angle}deg)`;
+                wiggle++;
+                setTimeout(doWiggle, animDuration / wiggleFrames);
+            } else {
+                c.style.transform = 'rotate(0deg)';
+                c.style.transition = 'opacity 0.7s';
+                c.style.opacity = '0';
+                feedback.style.opacity = '0';
+                setTimeout(() => {
+                    if (feedback.parentNode) feedback.parentNode.removeChild(feedback);
+                    if (c.parentNode) game.removeChild(c);
+                }, 700);
+            }
+        }
+        doWiggle();
         // Remove the cactus from placed array
         const index = placed.findIndex(r =>
             Math.abs(r.left - c.style.left.replace('px', '')) < 1 &&
@@ -106,7 +146,6 @@ document.addEventListener('DOMContentLoaded', function () {
         );
         if (index !== -1) placed.splice(index, 1);
         // Game Logic 
-        var randValue = randomBetween(0,1);
         if (randValue < 0.5) {
             fluid += 1;
         } else {
@@ -114,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         updateHeartsAndFluid();
 
-        if (hearts <= 0){
+        if (hearts <= 0) {
             console.log("Game over");
             introFrame.style.display = "flex";
 
@@ -136,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
             game.style.display = "none";
             return 10;
         }
-        
+
         spawnCacti();
     }
 
@@ -229,25 +268,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Keyframes for bounce and roll
         const keyframes = [
-            { 
-                left: `${startLeft}px`, 
-                transform: `rotate(0deg) translateY(0px)` 
+            {
+                left: `${startLeft}px`,
+                transform: `rotate(0deg) translateY(0px)`
             },
-            { 
+            {
                 offset: 0.25,
-                transform: `rotate(${leftToRight ? 180 : -180}deg) translateY(-${bounceHeight}px)` 
+                transform: `rotate(${leftToRight ? 180 : -180}deg) translateY(-${bounceHeight}px)`
             },
-            { 
+            {
                 offset: 0.5,
-                transform: `rotate(${leftToRight ? 360 : -360}deg) translateY(0px)` 
+                transform: `rotate(${leftToRight ? 360 : -360}deg) translateY(0px)`
             },
-            { 
+            {
                 offset: 0.75,
-                transform: `rotate(${leftToRight ? 540 : -540}deg) translateY(-${bounceHeight}px)` 
+                transform: `rotate(${leftToRight ? 540 : -540}deg) translateY(-${bounceHeight}px)`
             },
-            { 
-                left: `${endLeft}px`, 
-                transform: `rotate(${leftToRight ? 720 : -720}deg) translateY(0px)` 
+            {
+                left: `${endLeft}px`,
+                transform: `rotate(${leftToRight ? 720 : -720}deg) translateY(0px)`
             }
         ];
 

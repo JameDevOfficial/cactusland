@@ -1,6 +1,16 @@
+
 * {
     font-family: "National Park", sans-serif;
     font-weight: 600;
+}
+img {
+    -webkit-user-drag: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    pointer-events: auto;
 }
 
 :root {
@@ -148,7 +158,8 @@
 
 #fluid span {
     color: white;
-    font-family: "Dynapuff", sans-serif;    font-size: 2rem;
+    font-family: "Dynapuff", sans-serif;
+    font-size: 2rem;
     font-weight: 800;
     -webkit-text-stroke: 2px black;
 }
@@ -169,4 +180,20 @@
 
 .tumbleweed{
     width: 5rem;
+}
+
+.cactus-feedback {
+    position: absolute;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Dynapuff", sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    opacity: 1;
+    pointer-events: none;
+    transition: opacity 0.7s;
+    z-index: 1000;
+    -webkit-text-stroke: 2px black;
 }
