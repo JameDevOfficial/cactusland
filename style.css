@@ -98,6 +98,8 @@
     top: 50%;
     transform: translate(-50%, -50%);
     background-image: url('assets/backgroundScene.png');
+    background-size: cover;
+    background-position: 50%;
 }
 .cactus {
     -webkit-user-select: none;
