@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
             spawnCacti();
         }
         updateHeartsAndFluid();
+        startTumbleweedInterval();
     };
 
     const CACTUS_COUNT = 15;
@@ -97,7 +98,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function handleCactiClick(c) {
         if (hasWon) return 1;
-        console.log("CLICK")
         game.removeChild(c);
         // Remove the cactus from placed array
         const index = placed.findIndex(r =>
@@ -138,7 +138,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         
         spawnCacti();
-        console.log("Clicked Cactus");
     }
 
     function updateHeartsAndFluid() {
@@ -181,7 +180,95 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Call this whenever hearts changes
     updateHeartsAndFluid();
+    let tumbleweedInterval;
+    function startTumbleweedInterval() {
+        if (tumbleweedInterval) clearInterval(tumbleweedInterval);
+        function scheduleTumbleweed() {
+            if (tumbleweedInterval) clearTimeout(tumbleweedInterval);
+            if (game.style.display != "none") tumbleweed();
+            const nextTime = Math.random() * 4000 + 8000; // 8000ms to 12000ms
+            tumbleweedInterval = setTimeout(scheduleTumbleweed, nextTime);
+        }
+        scheduleTumbleweed();
+    }
 
+    function tumbleweed() {
+        // Determine random direction: true = left to right, false = right to left
+        const leftToRight = Math.random() < 0.5;
+
+        // Use cactus size logic
+        let scale = randomBetween(CACTUS_MIN_SCALE, CACTUS_MAX_SCALE);
+        const minTop = game.clientHeight * CACTUS_MIN_TOP_RATIO;
+        const maxTop = game.clientHeight - CACTUS_HEIGHT * scale;
+        let top = randomBetween(minTop, maxTop > minTop ? maxTop : minTop);
+
+        // Further up = smaller
+        scale = CACTUS_MIN_SCALE + (CACTUS_MAX_SCALE - CACTUS_MIN_SCALE) * ((top - minTop) / ((game.clientHeight - CACTUS_HEIGHT * scale) - minTop));
+        const remBase = 16;
+        const width = (CACTUS_WIDTH * scale) / remBase;
+        const height = (CACTUS_HEIGHT * scale) / remBase;
+
+        // Create tumbleweed element
+        const tumbleweed = document.createElement('img');
+        tumbleweed.src = 'assets/tumbleweed.png';
+        tumbleweed.className = 'tumbleweed';
+        tumbleweed.style.position = 'absolute';
+        tumbleweed.style.width = `${width}rem`;
+        tumbleweed.style.height = `${height}rem`;
+        tumbleweed.style.top = `${top}px`;
+        tumbleweed.style.zIndex = Math.floor(top);
+
+        // Start and end positions
+        const startLeft = leftToRight ? -CACTUS_WIDTH * scale : game.clientWidth;
+        const endLeft = leftToRight ? game.clientWidth : -CACTUS_WIDTH * scale;
+        tumbleweed.style.left = `${startLeft}px`;
+
+        // Animation: roll and bounce
+        const duration = randomBetween(4000, 7000); // ms
+        const bounceHeight = randomBetween(10, 30) * scale; // px
+
+        // Keyframes for bounce and roll
+        const keyframes = [
+            { 
+                left: `${startLeft}px`, 
+                transform: `rotate(0deg) translateY(0px)` 
+            },
+            { 
+                offset: 0.25,
+                transform: `rotate(${leftToRight ? 180 : -180}deg) translateY(-${bounceHeight}px)` 
+            },
+            { 
+                offset: 0.5,
+                transform: `rotate(${leftToRight ? 360 : -360}deg) translateY(0px)` 
+            },
+            { 
+                offset: 0.75,
+                transform: `rotate(${leftToRight ? 540 : -540}deg) translateY(-${bounceHeight}px)` 
+            },
+            { 
+                left: `${endLeft}px`, 
+                transform: `rotate(${leftToRight ? 720 : -720}deg) translateY(0px)` 
+            }
+        ];
+
+        tumbleweed.animate(keyframes, {
+            duration: duration,
+            easing: 'linear'
+        });
+
+        // Animate left property manually for compatibility
+        tumbleweed.style.transition = `left ${duration}ms linear`;
+        setTimeout(() => {
+            tumbleweed.style.left = `${endLeft}px`;
+        }, 10);
+
+        // Remove tumbleweed after animation
+        setTimeout(() => {
+            if (tumbleweed.parentNode) tumbleweed.parentNode.removeChild(tumbleweed);
+        }, duration + 100);
+
+        game.appendChild(tumbleweed);
+    }
 });
 
 //Who doesn't like cacti? 
