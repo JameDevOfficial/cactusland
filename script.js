@@ -1,4 +1,5 @@
 "use strict"
+
 document.addEventListener('DOMContentLoaded', function () {
 
     const startButton = document.getElementById("startButton");
@@ -15,14 +16,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-    const CACTUS_COUNT = 15;
+    var CACTUS_COUNT = 15;
     const CACTUS_WIDTH = 60; // px, adjust as needed
     const CACTUS_HEIGHT = 80; // px, adjust as needed
     const CACTUS_MIN_SCALE = 0.5;
     const CACTUS_MAX_SCALE = 2;
     const CACTUS_MIN_TOP_RATIO = 0.5; // Only spawn in lower half
 
-    const placed = [];
+    var placed = [];
 
     var maxHearts = 5;
     var hearts = 5;
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var hasWon = false;
     var waterGain = 1;
     var damageDealt = 0.5;
+    var isHardMode = false;
 
     startButton.onclick = function () {
         if (startButton.innerHTML == "Fill it!") {
@@ -377,9 +379,13 @@ document.addEventListener('DOMContentLoaded', function () {
         game.appendChild(tumbleweed);
     }
 
-    function listenForSecretWord(word = "uphere") {
+    function listenForSecretWord(word = "uphere") { // congrats, you found the secret word, now you ruined the game for you, yay
+        // Please don't tell anyone, so others can have fun! Ty
         let buffer = "";
         document.addEventListener('keydown', function (e) {
+            //if (getComputedStyle(game).display === "none") {
+            //    return;
+            //}
             if (e.key.length === 1) {
                 buffer += e.key.toLowerCase();
                 if (buffer.length > word.length) {
@@ -408,7 +414,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (hardModeWrapper) {
             hardModeWrapper.style.display = "flex";
         }
-        game.style.display = "none"
+        game.style.display = "none";
+        introFrame.style.display = "none";
+        outroFrame.style.display = "none";
         if (startHardModeBtn) {
             startHardModeBtn.addEventListener("click", playHardMode);
         }
@@ -416,15 +424,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function playHardMode() {
+        CACTUS_COUNT = 7
+        isHardMode = true;
         console.log("Playin Hard mode...");
         requiredFluid = 50;
         damageDealt = 2;
         hearts = 5;
         maxHearts = 5;
         fluid = 0;
-        updateHeartsAndFluid();
         hardModeWrapper.style.display = "none";
         game.style.display = "block";
+        // Remove existing cacti
+        document.querySelectorAll('.cactus').forEach(el => el.remove());
+        placed = [];
+        placed.length = 0;
+        for (let i = 0; i < CACTUS_COUNT; i++) {
+            spawnCacti();
+        }
+        updateHeartsAndFluid();
+        startTumbleweedInterval();
+
     }
     document.addEventListener('contextmenu', event => event.preventDefault());
 });
