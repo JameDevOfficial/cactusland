@@ -424,14 +424,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function playHardMode() {
-        CACTUS_COUNT = 7
         isHardMode = true;
-        console.log("Playin Hard mode...");
+        CACTUS_COUNT = 7
         requiredFluid = 50;
+        fluid = 0;
         damageDealt = 2;
         hearts = 5;
         maxHearts = 5;
-        fluid = 0;
+
+        document.getElementById("flashlight").style.display = "block";
         hardModeWrapper.style.display = "none";
         game.style.display = "block";
         // Remove existing cacti
@@ -443,6 +444,19 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         updateHeartsAndFluid();
         startTumbleweedInterval();
+
+        let mouseX = 0;
+        let mouseY = 0;
+        let flashlight = document.getElementById("flashlight");
+
+        function getMousePosition(e) {
+            if (!isHardMode) return;
+            mouseX = e.pageX;
+            mouseY = e.pageY;
+            flashlight.style.setProperty("--Xpos", mouseX + "px");
+            flashlight.style.setProperty("--Ypos", mouseY + "px");
+        }
+        document.addEventListener("mousemove", getMousePosition);
 
     }
     document.addEventListener('contextmenu', event => event.preventDefault());

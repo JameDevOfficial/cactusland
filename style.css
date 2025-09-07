@@ -11,8 +11,11 @@
 * {
     font-family: "National Park", sans-serif;
     font-weight: 600;
-    color: var(--color-fluid-text)
+    color: var(--color-fluid-text);
+    margin: 0;
+     padding: 0;
 }
+
 img {
     -webkit-user-drag: none;
     -ms-user-select: none;
@@ -84,6 +87,7 @@ img {
     margin: 0 1rem;
     color: var(--color-primary);
 }
+
 .message span {
     color: var(--color-primary);
 }
@@ -119,7 +123,7 @@ img {
     height: 100vmin;
     min-height: 100vh;
     position: fixed;
-        overflow: hidden;
+    overflow: hidden;
     left: 50%;
     top: 0;
     transform: translate(-50%, 0);
@@ -127,6 +131,7 @@ img {
     background-size: cover;
     background-position: 50%;
 }
+
 .cactus {
     -webkit-user-select: none;
     user-select: none;
@@ -142,23 +147,27 @@ img {
     top: 0;
     transform: translate(-50%, 0);
     z-index: -100;
-    display:none;
+    display: none;
 }
-#hearts{
+
+#hearts {
     margin: 1rem;
     display: flex;
     flex-direction: row;
     gap: 0.2rem;
 }
-.heart{
+
+.heart {
     width: 2.5rem;
 }
-#waterDrop{
+
+#waterDrop {
     width: 3.5rem;
 
     height: auto;
 }
-#fluid{
+
+#fluid {
     margin-right: 0.5rem;
     margin-top: 0.5rem;
     position: fixed;
@@ -177,29 +186,34 @@ img {
     -webkit-text-stroke: 2px black;
 }
 
-#outro-wrapper{
+#outro-wrapper {
     display: none;
 }
-#outro-background, #intro-background{
+
+#outro-background,
+#intro-background {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
-#intro-image{
+
+#intro-image {
     height: 20rem;
 }
-#wooden_sign_wrapper{
+
+#wooden_sign_wrapper {
     margin: 0;
     padding: 0;
     scale: 0.8;
 }
 
-.tumbleweed{
+.tumbleweed {
     width: 5rem;
 }
 
-.cactus-feedback, .mouse {
+.cactus-feedback,
+.mouse {
     position: absolute;
     height: 32px;
     display: flex;
@@ -215,8 +229,8 @@ img {
     -webkit-text-stroke: 2px black;
 }
 
-#mouse{
-    height:3.2rem;
+#mouse {
+    height: 3.2rem;
     object-fit: contain;
     object-position: center;
     display: none;
@@ -225,4 +239,22 @@ img {
 /*Hard Mode*/
 #hardMode-wrapper {
     display: none;
+}
+
+#flashlight {
+    --Xpos: 50vw;
+    --Ypos: 50vh;
+    display: none;
+}
+
+#flashlight:before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    pointer-events: none;
+    background: radial-gradient(circle 9em at var(--Xpos) var(--Ypos),
+            rgba(0, 0, 0, 0),
+            rgba(0, 0, 0, 1));
 }
