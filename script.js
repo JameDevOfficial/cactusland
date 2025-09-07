@@ -112,16 +112,55 @@ document.addEventListener('DOMContentLoaded', function () {
         cactus.style.width = `${(CACTUS_WIDTH * scale) / remBase}rem`;
         cactus.style.height = `${(CACTUS_HEIGHT * scale) / remBase}rem`;
         cactus.style.zIndex = Math.floor(top); // further up = lower z-index
-        cactus.addEventListener('click', function () { handleCactiClick(cactus); });
+
+        // Assign random correct click: 0 = left, 2 = right
+        cactus.dataset.correctClick = Math.random() < 0.5 ? "0" : "2";
+
+        // Mouse hover logic
+        cactus.addEventListener('mouseenter', function () {
+            showMouseAboveCactus(cactus);
+        });
+        cactus.addEventListener('mouseleave', function () {
+            hideMouse();
+        });
+
+        // Listen for both left and right click
+        cactus.addEventListener('mousedown', function (e) {
+            handleCactiClick(cactus, e.button);
+        });
+
         game.appendChild(cactus);
     }
 
-    function handleCactiClick(c) {
+    // Show mouse image above cactus
+    function showMouseAboveCactus(cactus) {
+        const mouseImg = document.getElementById('mouse');
+        mouseImg.style.display = 'block';
+        mouseImg.style.position = 'absolute';
+        mouseImg.style.left = cactus.style.left;
+        mouseImg.style.width = cactus.style.width;
+        // Place mouse above cactus (32px above top)
+        mouseImg.style.top = `calc(${cactus.style.top} - 50px)`;
+        mouseImg.style.zIndex = 1001;
+        if (cactus.dataset.correctClick == "2") {
+            mouseImg.style.transform = 'scaleX(-1)';
+        } else {
+            mouseImg.style.transform = 'scaleX(1)';
+        }
+    }
+    function hideMouse() {
+        const mouseImg = document.getElementById('mouse');
+        mouseImg.style.display = 'none';
+    }
+
+    function handleCactiClick(c, button) {
         if (hasWon) return 1;
         if (c.dataset.clicked === 'true') return;
         c.dataset.clicked = 'true';
-        var randValue = randomBetween(0, 1);
-        const hurt = randValue >= 0.5;
+
+        // 0 = left, 2 = right
+        const correct = c.dataset.correctClick === String(button);
+
         const animDuration = 400;
 
         // Create feedback symbol
@@ -130,10 +169,8 @@ document.addEventListener('DOMContentLoaded', function () {
         feedback.style.left = c.style.left;
         feedback.style.top = `calc(${c.style.top} - 32px)`;
         feedback.style.width = c.style.width;
-        feedback.style.color = hurt ? '#d74b4bff' : 'deepskyblue';
-        // Use X for hurt, 💧 for water (placeholder)
-        feedback.textContent = hurt ? '-0.5' : '+1';
-
+        feedback.style.color = correct ? 'deepskyblue' : '#d74b4bff';
+        feedback.textContent = correct ? '+1' : '-0.5';
 
         game.appendChild(feedback);
 
@@ -159,6 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
         doWiggle();
+        hideMouse();
         // Remove the cactus from placed array
         const index = placed.findIndex(r =>
             Math.abs(r.left - c.style.left.replace('px', '')) < 1 &&
@@ -166,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function () {
         );
         if (index !== -1) placed.splice(index, 1);
         // Game Logic 
-        if (randValue < 0.5) {
+        if (correct) {
             fluid += 1;
         } else {
             hearts -= 0.5;
@@ -182,6 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (introButton) introButton.innerHTML = "Try again!"
             game.style.display = "none";
             maxHearts += 1;
+            hideMouse();
             return 0;
         }
 
@@ -193,6 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (introParagraph) introParagraph.innerHTML = "You managed to collect enough of this mysterious fluid to fill up the altar. What are you waiting for? Fill it!";
             if (introButton) introButton.innerHTML = "Fill it!"
             game.style.display = "none";
+            hideMouse();
             return 10;
         }
 
@@ -328,6 +368,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         game.appendChild(tumbleweed);
     }
+    document.addEventListener('contextmenu', event => event.preventDefault());
 });
 
-//Who doesn't like cacti? 
+//Who doesn't like cacti?
