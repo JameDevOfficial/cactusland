@@ -254,7 +254,7 @@ img {
     height: 100%;
     position: absolute;
     pointer-events: none;
-    background: radial-gradient(circle 9em at var(--Xpos) var(--Ypos),
+    background: radial-gradient(circle 10em at var(--Xpos) var(--Ypos),
             rgba(0, 0, 0, 0),
             rgba(0, 0, 0, 1));
 }
