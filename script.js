@@ -9,6 +9,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const introParagraph = introFrame.querySelector('p');
     const introButton = introFrame.querySelector('button')
     const outroFrame = document.getElementById("outro-wrapper")
+    const bgMap = document.getElementById("backgroundMap");
+    const startHardModeBtn = document.getElementById("startHardMode");
+    const hardModeWrapper = document.getElementById("hardMode-wrapper")
+
+
+
+    const CACTUS_COUNT = 15;
+    const CACTUS_WIDTH = 60; // px, adjust as needed
+    const CACTUS_HEIGHT = 80; // px, adjust as needed
+    const CACTUS_MIN_SCALE = 0.5;
+    const CACTUS_MAX_SCALE = 2;
+    const CACTUS_MIN_TOP_RATIO = 0.5; // Only spawn in lower half
 
     const placed = [];
 
@@ -17,6 +29,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var fluid = 0;
     var requiredFluid = 10;
     var hasWon = false;
+    var waterGain = 1;
+    var damageDealt = 0.5;
 
     startButton.onclick = function () {
         if (startButton.innerHTML == "Fill it!") {
@@ -56,13 +70,6 @@ document.addEventListener('DOMContentLoaded', function () {
         updateHeartsAndFluid();
         startTumbleweedInterval();
     };
-
-    const CACTUS_COUNT = 15;
-    const CACTUS_WIDTH = 60; // px, adjust as needed
-    const CACTUS_HEIGHT = 80; // px, adjust as needed
-    const CACTUS_MIN_SCALE = 0.5;
-    const CACTUS_MAX_SCALE = 2;
-    const CACTUS_MIN_TOP_RATIO = 0.5; // Only spawn in lower half
 
     function randomBetween(a, b) {
         return Math.random() * (b - a) + a;
@@ -132,14 +139,12 @@ document.addEventListener('DOMContentLoaded', function () {
         game.appendChild(cactus);
     }
 
-    // Show mouse image above cactus
     function showMouseAboveCactus(cactus) {
         const mouseImg = document.getElementById('mouse');
         mouseImg.style.display = 'block';
         mouseImg.style.position = 'absolute';
         mouseImg.style.left = cactus.style.left;
         mouseImg.style.width = cactus.style.width;
-        // Place mouse above cactus (32px above top)
         mouseImg.style.top = `calc(${cactus.style.top} - 50px)`;
         mouseImg.style.zIndex = 1001;
         if (cactus.dataset.correctClick == "2") {
@@ -148,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
             mouseImg.style.transform = 'scaleX(1)';
         }
     }
+    
     function hideMouse() {
         const mouseImg = document.getElementById('mouse');
         mouseImg.style.display = 'none';
@@ -160,7 +166,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 0 = left, 2 = right
         const correct = c.dataset.correctClick === String(button);
-
         const animDuration = 400;
 
         // Create feedback symbol
@@ -170,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
         feedback.style.top = `calc(${c.style.top} - 32px)`;
         feedback.style.width = c.style.width;
         feedback.style.color = correct ? 'deepskyblue' : '#d74b4bff';
-        feedback.textContent = correct ? '+1' : '-0.5';
+        feedback.textContent = correct ? "+"+waterGain : "-"+damageDealt;
 
         game.appendChild(feedback);
 
@@ -195,8 +200,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 }, 700);
             }
         }
+
         doWiggle();
         hideMouse();
+
         // Remove the cactus from placed array
         const index = placed.findIndex(r =>
             Math.abs(r.left - c.style.left.replace('px', '')) < 1 &&
@@ -205,9 +212,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (index !== -1) placed.splice(index, 1);
         // Game Logic 
         if (correct) {
-            fluid += 1;
+            fluid += waterGain;
         } else {
-            hearts -= 0.5;
+            hearts -= damageDealt;
         }
         updateHeartsAndFluid();
 
@@ -224,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return 0;
         }
 
-        if (fluid >= 10) {
+        if (fluid >= requiredFluid) {
             console.log("Game won");
             introFrame.style.display = "flex";
 
@@ -233,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (introButton) introButton.innerHTML = "Fill it!"
             game.style.display = "none";
             hideMouse();
-            return 10;
+            return requiredFluid;
         }
 
         spawnCacti();
@@ -279,6 +286,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Call this whenever hearts changes
     updateHeartsAndFluid();
+
     let tumbleweedInterval;
     function startTumbleweedInterval() {
         if (tumbleweedInterval) clearInterval(tumbleweedInterval);
@@ -367,6 +375,56 @@ document.addEventListener('DOMContentLoaded', function () {
         }, duration + 100);
 
         game.appendChild(tumbleweed);
+    }
+
+    function listenForSecretWord(word = "uphere") {
+        let buffer = "";
+        document.addEventListener('keydown', function (e) {
+            if (e.key.length === 1) {
+                buffer += e.key.toLowerCase();
+                if (buffer.length > word.length) {
+                    buffer = buffer.slice(-word.length);
+                }
+                if (buffer === word) {
+                    initHardMode();
+                    buffer = ""; 
+                    console.log("Hard!!!");// Prevent repeated triggers
+                }
+            }
+        });
+    }
+    listenForSecretWord();
+
+    function initHardMode() {
+        document.documentElement.style.filter = "grayscale(100%)";
+        document.documentElement.style.setProperty('--color-background', '#222');
+        document.documentElement.style.setProperty('--color-primary', '#f0f0f0');
+        document.documentElement.style.setProperty('--color-secondary', '#383737');
+        document.documentElement.style.setProperty('--color-secondary-hover', '#666');
+        document.documentElement.style.setProperty('--color-fluid-text', '#f0f0f0');
+        if (bgMap) {
+            bgMap.style.filter = "invert(100%)";
+        }
+        if (hardModeWrapper) {
+            hardModeWrapper.style.display = "flex";
+        }
+        game.style.display = "none"
+        if (startHardModeBtn) {
+            startHardModeBtn.addEventListener("click", playHardMode);
+        }
+        return -1;
+    }
+
+    function playHardMode() {
+        console.log("Playin Hard mode...");
+        requiredFluid = 50;
+        damageDealt = 2;
+        hearts = 5;
+        maxHearts = 5;
+        fluid = 0;
+        updateHeartsAndFluid();
+        hardModeWrapper.style.display = "none";
+        game.style.display = "block";
     }
     document.addEventListener('contextmenu', event => event.preventDefault());
 });

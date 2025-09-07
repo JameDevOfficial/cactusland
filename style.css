@@ -1,7 +1,17 @@
+:root {
+    --color-background: #f6dbba;
+    --color-primary: #4a2d24;
+    --color-secondary: #c7a48d;
+    --color-secondary-hover: #a37c62;
+    --color-fluid-text: #000000;
+    --color-fluid-stroke: #ffffff;
+}
+
 
 * {
     font-family: "National Park", sans-serif;
     font-weight: 600;
+    color: var(--color-fluid-text)
 }
 img {
     -webkit-user-drag: none;
@@ -14,7 +24,7 @@ img {
 }
 
 :root {
-    background-color: #f6dbba;
+    background-color: var(--color-background);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -23,8 +33,8 @@ img {
 #backgroundMap {
     position: fixed;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    transform: translate(-50%, 0);
     width: 100vw;
     height: 100vh;
     object-fit: cover;
@@ -43,8 +53,8 @@ img {
 .message {
     position: absolute;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    transform: translate(-50%, 0);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -55,7 +65,7 @@ img {
 }
 
 .message div {
-    background-color: #f6dbba;
+    background-color: var(--color-background);
     border-radius: 1.5rem;
     padding: 1rem;
 }
@@ -65,21 +75,24 @@ img {
     font-size: 3.5rem;
     max-width: 100vmin;
     margin: 0 1rem 1rem 1rem;
-    color: #4a2d24;
+    color: var(--color-primary);
 }
 
 .message p {
     font-size: 1.5rem;
     max-width: 100vmin;
     margin: 0 1rem;
-    color: #4a2d24;
+    color: var(--color-primary);
+}
+.message span {
+    color: var(--color-primary);
 }
 
 .message button {
     display: block;
     margin: auto;
     margin: 1rem auto;
-    background-color: #c7a48d;
+    background-color: var(--color-secondary);
     font-size: 1.5rem;
     padding: 0.2rem 0.5rem;
     border: none;
@@ -87,14 +100,14 @@ img {
 }
 
 .message button:hover {
-    background-color: #a37c62;
+    background-color: var(--color-secondary-hover);
     cursor: pointer;
     scale: 1.05;
     transition: 0.07s;
 }
 
 .message button:active {
-    background-color: #a37c62;
+    background-color: var(--color-secondary-hover);
     cursor: pointer;
     scale: 1.0;
     transition: 0.07s;
@@ -108,8 +121,8 @@ img {
     position: fixed;
         overflow: hidden;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    transform: translate(-50%, 0);
     background-image: url('assets/backgroundScene.png');
     background-size: cover;
     background-position: 50%;
@@ -126,8 +139,8 @@ img {
     min-height: 100vh;
     position: fixed;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    transform: translate(-50%, 0);
     z-index: -100;
     display:none;
 }
@@ -206,4 +219,10 @@ img {
     height:3.2rem;
     object-fit: contain;
     object-position: center;
+    display: none;
+}
+
+/*Hard Mode*/
+#hardMode-wrapper {
+    display: none;
 }
